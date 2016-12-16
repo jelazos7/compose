@@ -1,7 +1,7 @@
-FROM debian:wheezy
+FROM ericvh/arm64-ubuntu
 
 RUN set -ex; \
-    apt-get update -qq; \
+    apt-get update && \
     apt-get install -y \
         locales \
         gcc \
@@ -62,6 +62,7 @@ ENV LANG en_US.UTF-8
 RUN useradd -d /home/user -m -s /bin/bash user
 WORKDIR /code/
 
+ENV LC_ALL C
 RUN pip install tox==2.1.1
 
 ADD requirements.txt /code/
@@ -75,4 +76,7 @@ RUN tox --notest
 ADD . /code/
 RUN chown -R user /code/
 
+VOLUME /workdir
+WORKDIR /workdir
 ENTRYPOINT ["/code/.tox/py27/bin/docker-compose"]
+CMD ["version"]
